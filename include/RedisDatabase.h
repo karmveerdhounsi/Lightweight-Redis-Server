@@ -27,9 +27,9 @@ public:
 
     // List Opreations
     std::vector<std::string> lget(const std::string& key);
-    ssize_t llen(const std::string& key);
-    void lpush(const std::string& key, const std::string& value);
-    void rpush(const std::string& key, const std::string& value);
+    long long llen(const std::string& key);
+    void lpush(const std::string& key, const std::vector<std::string>& value);
+    void rpush(const std::string& key, const std::vector<std::string>& value);
     bool lpop(const std::string& key, std::string& value);
     bool rpop(const std::string& key, std::string& value);
     int lrem(const std::string& key, int count, const std::string& value);
@@ -44,7 +44,7 @@ public:
     std::unordered_map<std::string, std::string> hgetall(const std::string& key);
     std::vector<std::string> hkeys(const std::string& key);
     std::vector<std::string> hvals(const std::string& key);
-    ssize_t hlen(const std::string& key);
+    long long hlen(const std::string& key);
     bool hmset(const std::string& key, const std::vector<std::pair<std::string, std::string>>& fieldValues);
 
     // Persistance: Dump / load the database from a file.
