@@ -155,27 +155,23 @@ static std::string handleLget(const std::vector<std::string>& tokens, RedisDatab
 static std::string handleLlen(const std::vector<std::string>& tokens, RedisDatabase& db) {
     if (tokens.size() < 2) 
         return "-Error: LLEN requires key\r\n";
-    ssize_t len = db.llen(tokens[1]);
+    long long len = db.llen(tokens[1]);
     return ":" + std::to_string(len) + "\r\n";
 }
 
 static std::string handleLpush(const std::vector<std::string>& tokens, RedisDatabase& db) {
     if (tokens.size() < 3) 
         return "-Error: LPUSH requires key and value\r\n";
-    for (size_t i = 2; i < tokens.size(); ++i) {
-        db.lpush(tokens[1], tokens[i]);
-    }
-    ssize_t len = db.llen(tokens[1]);
+    db.lpush(tokens[1], std::vector<std::string>(tokens.begin() + 2, tokens.end()));
+    long long len = db.llen(tokens[1]);
     return ":" + std::to_string(len) + "\r\n";
 }
 
 static std::string handleRpush(const std::vector<std::string>& tokens, RedisDatabase& db) {
     if (tokens.size() < 3) 
         return "-Error: RPUSH requires key and value\r\n";
-    for (size_t i = 2; i < tokens.size(); ++i) {
-        db.rpush(tokens[1], tokens[i]);
-    }    
-    ssize_t len = db.llen(tokens[1]);
+    db.rpush(tokens[1], std::vector<std::string>(tokens.begin() + 2, tokens.end()));
+    long long len = db.llen(tokens[1]);
     return ":" + std::to_string(len) + "\r\n";
 }
 
@@ -309,7 +305,7 @@ static std::string handleHvals(const std::vector<std::string>& tokens, RedisData
 static std::string handleHlen(const std::vector<std::string>& tokens, RedisDatabase& db) {
     if (tokens.size() < 2) 
         return "-Error: HLEN requires key\r\n";
-    ssize_t len = db.hlen(tokens[1]);
+    long long len = db.hlen(tokens[1]);
     return ":" + std::to_string(len) + "\r\n";
 }
 
