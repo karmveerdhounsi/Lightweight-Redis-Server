@@ -72,7 +72,7 @@ bool RedisDatabase::del(const std::string& key) {
     erased |= kv_store.erase(key) > 0;
     erased |= list_store.erase(key) > 0;
     erased |= hash_store.erase(key) > 0;
-    return false;
+    return erased;
 }
 
 bool RedisDatabase::expire(const std::string& key, int seconds) {
@@ -148,7 +148,7 @@ std::vector<std::string> RedisDatabase::lget(const std::string& key) {
     return {}; 
 }
 
-ssize_t RedisDatabase::llen(const std::string& key) {
+long long RedisDatabase::llen(const std::string& key) {
     std::lock_guard<std::mutex> lock(db_mutex);
     auto it = list_store.find(key);
     if (it != list_store.end()) 
@@ -156,14 +156,14 @@ ssize_t RedisDatabase::llen(const std::string& key) {
     return 0;
 }
 
-void RedisDatabase::lpush(const std::string& key, const std::string& value) {
+void RedisDatabase::lpush(const std::string& key, const std::vector<std::string>& value) {
     std::lock_guard<std::mutex> lock(db_mutex);
-    list_store[key].insert(list_store[key].begin(), value);
+    list_store[key].insert(list_store[key].begin(), value.rbegin(), value.rend());
 }
 
-void RedisDatabase::rpush(const std::string& key, const std::string& value) {
+void RedisDatabase::rpush(const std::string& key, const std::vector<std::string>& value) {
     std::lock_guard<std::mutex> lock(db_mutex);
-    list_store[key].push_back(value);
+    list_store[key].insert(list_store[key].end(), value.begin(), value.end());
 }
 
 bool RedisDatabase::lpop(const std::string& key, std::string& value) {
@@ -326,7 +326,7 @@ std::vector<std::string> RedisDatabase::hvals(const std::string& key) {
     return values;
 }
 
-ssize_t RedisDatabase::hlen(const std::string& key) {
+long long RedisDatabase::hlen(const std::string& key) {
     std::lock_guard<std::mutex> lock(db_mutex);
     auto it = hash_store.find(key);
     return (it != hash_store.end()) ? it->second.size() : 0;
